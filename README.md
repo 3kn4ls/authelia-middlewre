@@ -39,6 +39,11 @@ Authelia es un servidor de autenticación y autorización de código abierto que
 │   ├── customize-domain.sh    # Personalizar dominio
 │   ├── deploy.sh             # Desplegar Authelia
 │   └── uninstall.sh          # Desinstalar Authelia
+├── docs/                      # Documentación adicional
+│   ├── QUICKSTART.md         # Guía de inicio rápido
+│   ├── FAQ.md                # Preguntas frecuentes
+│   ├── SSL-EXISTENTE.md      # Usar certificados SSL existentes
+│   └── CERT-MANAGER.md       # Configurar cert-manager
 └── README.md                  # Esta guía
 ```
 
@@ -51,7 +56,8 @@ Antes de comenzar, asegúrate de tener:
 3. **kubectl** configurado para acceder a tu cluster
 4. **Un dominio** configurado apuntando a tu IP pública
 5. **Puertos 80 y 443** abiertos y redirigidos a tu Raspberry Pi (192.168.1.95)
-6. **Docker** instalado (solo para generar passwords, opcional)
+6. **Certificados SSL** configurados (Let's Encrypt u otro) - Si ya los tienes, ¡perfecto! Si no, consulta `docs/CERT-MANAGER.md`
+7. **Docker** instalado (solo para generar passwords, opcional)
 
 ## Instalación Rápida
 
@@ -122,6 +128,11 @@ https://auth.tudominio.com
 ```
 
 Deberías ver el portal de login de Authelia.
+
+**Nota sobre SSL/TLS:**
+- Si ya tienes certificados SSL configurados (ej: Let's Encrypt con cert-manager o wildcard certificate), Authelia usará automáticamente el certificado existente para `auth.tudominio.com`
+- Si tienes un certificado wildcard (`*.tudominio.com`), todos tus subdominios ya estarán cubiertos
+- Si NO tienes SSL configurado, consulta `docs/CERT-MANAGER.md` para configurar certificados automáticos
 
 Credenciales por defecto (CÁMBIALAS):
 - Usuario: `admin`
@@ -359,6 +370,12 @@ Esto eliminará todos los recursos excepto el namespace. Si también quieres eli
 
 ### Certificados SSL/TLS
 
+#### Si ya tienes SSL configurado
+
+Si ya tienes certificados SSL en tu cluster (Let's Encrypt, wildcard, etc.), **Authelia los usará automáticamente**. Consulta la guía detallada: [docs/SSL-EXISTENTE.md](docs/SSL-EXISTENTE.md)
+
+#### Si necesitas configurar SSL desde cero
+
 Para configurar certificados SSL automáticos con Let's Encrypt:
 
 1. Instala cert-manager en tu cluster
@@ -374,6 +391,8 @@ spec:
     - auth.tudominio.com
     secretName: authelia-tls
 ```
+
+**Guía completa:** [docs/CERT-MANAGER.md](docs/CERT-MANAGER.md)
 
 ## Recursos Adicionales
 

@@ -11,6 +11,7 @@ Antes de empezar, verifica que tienes:
 - [ ] Un dominio (ej: `midominio.com`)
 - [ ] DNS configurado apuntando `*.midominio.com` a tu IP pública
 - [ ] Puertos 80 y 443 redirigidos a tu Raspberry Pi (192.168.1.95)
+- [ ] Certificados SSL configurados (si ya los tienes, ¡perfecto! Ver `docs/SSL-EXISTENTE.md`)
 - [ ] Docker instalado (solo para generar passwords)
 
 ## Instalación en 5 Pasos
@@ -73,6 +74,12 @@ Abre tu navegador y accede a:
 ```
 https://auth.midominio.com
 ```
+
+**Sobre SSL/HTTPS:**
+- Si ya tienes certificados SSL configurados (Let's Encrypt, wildcard, etc.), Authelia los usará automáticamente
+- Si tu certificado cubre `*.midominio.com`, ya estás listo
+- Si necesitas configurar SSL desde cero, consulta `docs/CERT-MANAGER.md`
+- Para usar un certificado SSL existente específico, consulta `docs/SSL-EXISTENTE.md`
 
 Inicia sesión con:
 - Usuario: `admin`
