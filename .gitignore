@@ -1,0 +1,29 @@
+# Archivos sensibles - NO SUBIR A GIT PÚBLICO
+# Si has personalizado 03-secret.yaml con secretos reales, NO lo subas
+
+# Backups
+*.tar.gz
+*.backup
+backup/
+
+# Archivos temporales
+*.tmp
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Configuraciones locales personalizadas
+*-local.yaml
+*-custom.yaml
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

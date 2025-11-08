@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authelia
+  namespace: authelia
+  annotations:
+    # Usar cert-manager para certificados SSL automáticos (opcional)
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # Configuración de Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: auth.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: authelia
+            port:
+              number: 80
+  # Descomentar si usas cert-manager
+  # tls:
+  # - hosts:
+  #   - auth.TUDOMINIO.COM
+  #   secretName: authelia-tls

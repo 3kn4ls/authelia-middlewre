@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authelia-config
+  namespace: authelia
+  labels:
+    app: authelia
+data:
+  configuration.yml: |
+    ---
+    theme: light
+
+    server:
+      host: 0.0.0.0
+      port: 9091
+
+    log:
+      level: info
+      format: text
+
+    totp:
+      disable: false
+      issuer: authelia.com
+      algorithm: sha1
+      digits: 6
+      period: 30
+      skew: 1
+
+    webauthn:
+      disable: true
+
+    duo_api:
+      disable: true
+
+    authentication_backend:
+      password_reset:
+        disable: false
+      refresh_interval: 5m
+      file:
+        path: /config/users_database.yml
+        password:
+          algorithm: argon2id
+          iterations: 1
+          salt_length: 16
+          parallelism: 8
+          memory: 64
+
+    access_control:
+      default_policy: deny
+      rules:
+        # Regla para el portal de Authelia
+        - domain: "auth.TUDOMINIO.COM"
+          policy: bypass
+
+        # Ejemplo: proteger todos los subdominios con autenticación de un factor
+        - domain: "*.TUDOMINIO.COM"
+          policy: one_factor
+
+        # Ejemplo: si quieres servicios específicos con 2FA
+        # - domain: "admin.TUDOMINIO.COM"
+        #   policy: two_factor
+
+        # Ejemplo: permitir acceso sin autenticación a ciertos servicios
+        # - domain: "public.TUDOMINIO.COM"
+        #   policy: bypass
+
+    session:
+      name: authelia_session
+      # IMPORTANTE: Cambiar TUDOMINIO.COM por tu dominio real
+      domain: TUDOMINIO.COM
+      same_site: lax
+      expiration: 1h
+      inactivity: 5m
+      remember_me_duration: 1M
+
+    regulation:
+      max_retries: 3
+      find_time: 2m
+      ban_time: 5m
+
+    storage:
+      encryption_key: a_very_important_secret
+      local:
+        path: /config/db.sqlite3
+
+    notifier:
+      disable_startup_check: false
+      filesystem:
+        filename: /config/notification.txt
+
+    ...

@@ -1,0 +1,78 @@
+# EJEMPLO: Proteger múltiples servicios con diferentes políticas
+#
+# Este ejemplo muestra cómo puedes tener diferentes niveles de seguridad
+# para diferentes servicios usando las reglas de access_control en Authelia
+
+---
+# Servicio público - SIN protección
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-publica
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: www.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-publica
+            port:
+              number: 80
+
+---
+# Servicio interno - CON protección de 1 factor (usuario + password)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aplicacion-interna
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia@kubernetescrd
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: app.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aplicacion-interna
+            port:
+              number: 80
+
+---
+# Servicio crítico - CON protección de 2 factores (usuario + password + TOTP)
+# NOTA: Para que esto funcione, debes configurar en authelia-config la regla:
+#   - domain: "admin.TUDOMINIO.COM"
+#     policy: two_factor
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: panel-admin
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia@kubernetescrd
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: admin.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: panel-admin
+            port:
+              number: 80

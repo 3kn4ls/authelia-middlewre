@@ -1,0 +1,55 @@
+# EJEMPLO: Proteger Kubernetes Dashboard con Authelia
+#
+# Este ejemplo muestra cómo proteger el Kubernetes Dashboard
+# (o cualquier herramienta de administración de K3s) con Authelia
+
+---
+# Middleware Authelia en el namespace de kubernetes-dashboard
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authelia
+  namespace: kubernetes-dashboard
+spec:
+  forwardAuth:
+    address: http://authelia.authelia.svc.cluster.local/api/verify?rd=https://auth.TUDOMINIO.COM
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+      - Remote-Name
+      - Remote-Email
+
+---
+# Ingress para Kubernetes Dashboard PROTEGIDO
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    # Protección con Authelia
+    traefik.ingress.kubernetes.io/router.middlewares: kubernetes-dashboard-authelia@kubernetescrd
+
+    # SSL/TLS
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+    # Cert-manager (opcional)
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+  - host: k8s.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
+  # tls:
+  # - hosts:
+  #   - k8s.TUDOMINIO.COM
+  #   secretName: k8s-dashboard-tls

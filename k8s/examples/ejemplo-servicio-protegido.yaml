@@ -1,0 +1,74 @@
+# EJEMPLO: Cómo proteger un servicio existente con Authelia
+#
+# Este ejemplo muestra cómo añadir autenticación Authelia a cualquier servicio
+# que ya tengas desplegado en tu cluster K3s.
+#
+# Solo necesitas añadir la anotación del middleware en tu Ingress existente.
+
+---
+# Ejemplo de un servicio cualquiera (puede ser uno que ya tengas)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-aplicacion
+  namespace: default
+spec:
+  selector:
+    app: mi-aplicacion
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+# Ingress PROTEGIDO con Authelia
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mi-aplicacion
+  namespace: default
+  annotations:
+    # IMPORTANTE: Esta es la línea clave que protege tu servicio
+    traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia@kubernetescrd
+
+    # Configuración SSL (opcional pero recomendada)
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+    # Si usas cert-manager para certificados SSL automáticos
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+  - host: miapp.TUDOMINIO.COM
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mi-aplicacion
+            port:
+              number: 80
+  # TLS (opcional)
+  # tls:
+  # - hosts:
+  #   - miapp.TUDOMINIO.COM
+  #   secretName: miapp-tls
+
+---
+# NOTA: Si tu servicio está en un namespace diferente a 'default',
+# también puedes crear el middleware directamente en ese namespace:
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authelia
+  namespace: default  # Cambia esto al namespace de tu aplicación
+spec:
+  forwardAuth:
+    address: http://authelia.authelia.svc.cluster.local/api/verify?rd=https://auth.TUDOMINIO.COM
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+      - Remote-Name
+      - Remote-Email

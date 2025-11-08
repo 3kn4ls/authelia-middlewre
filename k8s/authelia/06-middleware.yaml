@@ -1,0 +1,29 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authelia
+  namespace: authelia
+spec:
+  forwardAuth:
+    address: http://authelia.authelia.svc.cluster.local/api/verify?rd=https://auth.TUDOMINIO.COM
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+      - Remote-Name
+      - Remote-Email
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authelia-basic
+  namespace: authelia
+spec:
+  forwardAuth:
+    address: http://authelia.authelia.svc.cluster.local/api/verify?auth=basic
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+      - Remote-Name
+      - Remote-Email
