@@ -25,6 +25,42 @@ Para protección simple y centralizada de servicios web, Authelia es la mejor op
 
 Sí, Authelia funciona con **cualquier** aplicación web, sin importar el lenguaje o framework. Solo protege el acceso HTTP/HTTPS, no necesita integración especial.
 
+### ¿Qué puertos y servicios afecta Authelia?
+
+**Authelia SOLO afecta a servicios HTTP/HTTPS (puertos 80 y 443)** que pasen por Traefik Ingress.
+
+**✅ Servicios que SÍ protege:**
+- Aplicaciones web accesibles por HTTP/HTTPS
+- Paneles de administración web
+- APIs REST expuestas vía Ingress
+- Cualquier servicio con un Ingress de Kubernetes que tenga el middleware de Authelia
+
+**❌ Servicios que NO afecta:**
+- SSH (puerto 22) - Seguirá funcionando normalmente
+- Minecraft (puerto 19132) - Sin cambios
+- Bases de datos (MySQL, PostgreSQL, MongoDB, etc.)
+- Servicios TCP/UDP que no sean HTTP
+- Servicios expuestos por NodePort o LoadBalancer sin Ingress
+
+**Ejemplo en tu Raspberry Pi:**
+```
+Puerto 22 (SSH)        → No protegido por Authelia, usa autenticación SSH
+Puerto 80 (HTTP)       → Protegido por Authelia (solo servicios con middleware)
+Puerto 443 (HTTPS)     → Protegido por Authelia (solo servicios con middleware)
+Puerto 19132 (Minecraft) → No protegido por Authelia, funciona normal
+```
+
+**Importante:** Incluso en los puertos 80/443, solo se protegen los servicios que **explícitamente** tengan el middleware de Authelia en su Ingress. Los servicios sin el middleware seguirán siendo accesibles sin autenticación.
+
+### ¿Puedo proteger servicios no-HTTP como SSH o bases de datos?
+
+No, Authelia es específicamente para HTTP/HTTPS. Para otros servicios:
+
+- **SSH (puerto 22)**: Usa autenticación por clave SSH y/o configuración de `sshd_config`
+- **Minecraft**: Usa whitelist del servidor (`whitelist.json`)
+- **Bases de datos**: Usa autenticación nativa del motor (usuarios/passwords de MySQL, PostgreSQL, etc.)
+- **Otros servicios TCP/UDP**: Usa NetworkPolicies de Kubernetes o firewall (iptables/ufw)
+
 ## Instalación
 
 ### ¿Necesito tener Traefik instalado?

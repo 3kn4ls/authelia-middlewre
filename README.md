@@ -17,6 +17,17 @@ Authelia es un servidor de autenticación y autorización de código abierto que
 - ✅ **Sin modificar aplicaciones**: Protege servicios sin tocar su código
 - ✅ **Políticas flexibles**: Diferentes niveles de seguridad por servicio
 
+## ⚠️ Alcance Importante
+
+**Authelia SOLO protege servicios HTTP/HTTPS (puertos 80 y 443)** que pasen por Traefik Ingress.
+
+- ✅ **SÍ afecta**: Aplicaciones web, APIs REST, paneles de administración web
+- ❌ **NO afecta**: SSH (22), Minecraft (19132), bases de datos, otros servicios TCP/UDP
+
+Tu SSH, servidor de Minecraft y otros servicios **seguirán funcionando exactamente igual**. Solo se protegen los servicios web que explícitamente configures con el middleware de Authelia.
+
+**Más detalles:** Ver [FAQ - ¿Qué puertos y servicios afecta?](docs/FAQ.md#qué-puertos-y-servicios-afecta-authelia)
+
 ## Estructura del Proyecto
 
 ```
