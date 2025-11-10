@@ -6,6 +6,8 @@ Este proyecto contiene todos los archivos necesarios para desplegar **Authelia**
 
 Authelia es un servidor de autenticación y autorización de código abierto que proporciona autenticación de dos factores y inicio de sesión único (SSO) a tus aplicaciones mediante un portal web. Actúa como middleware entre tu reverse proxy (Traefik) y tus servicios, protegiendo todos tus servicios web con un único punto de autenticación.
 
+**¿Quieres entender cómo funciona técnicamente?** Consulta la guía detallada: [docs/COMO-FUNCIONA.md](docs/COMO-FUNCIONA.md) donde se explica el flujo completo de autenticación, cómo se interceptan las peticiones, y cómo se bloquea el acceso no autorizado.
+
 ## Características
 
 - ✅ **Autenticación centralizada**: Un único login para todos tus servicios
@@ -41,6 +43,7 @@ Authelia es un servidor de autenticación y autorización de código abierto que
 │   └── uninstall.sh          # Desinstalar Authelia
 ├── docs/                      # Documentación adicional
 │   ├── QUICKSTART.md         # Guía de inicio rápido
+│   ├── COMO-FUNCIONA.md      # Explicación técnica del flujo de autenticación
 │   ├── FAQ.md                # Preguntas frecuentes
 │   ├── SSL-EXISTENTE.md      # Usar certificados SSL existentes
 │   └── CERT-MANAGER.md       # Configurar cert-manager
