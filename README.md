@@ -55,6 +55,7 @@ Tu SSH, servidor de Minecraft y otros servicios **seguirán funcionando exactame
 ├── docs/                      # Documentación adicional
 │   ├── QUICKSTART.md         # Guía de inicio rápido
 │   ├── COMO-FUNCIONA.md      # Explicación técnica del flujo de autenticación
+│   ├── USUARIOS-Y-ROLES.md   # Gestión de usuarios, grupos y autorización
 │   ├── FAQ.md                # Preguntas frecuentes
 │   ├── SSL-EXISTENTE.md      # Usar certificados SSL existentes
 │   └── CERT-MANAGER.md       # Configurar cert-manager
@@ -251,7 +252,7 @@ Políticas disponibles:
 - **one_factor**: Usuario + password
 - **two_factor**: Usuario + password + TOTP
 
-### Añadir Más Usuarios
+### Añadir Más Usuarios y Gestionar Roles
 
 Edita `k8s/authelia/03-secret.yaml` en la sección `users_database.yml`:
 
@@ -269,6 +270,7 @@ users:
     password: "$argon2id$v=19$..."  # Genera con ./scripts/generate-password.sh
     email: usuario2@tudominio.com
     groups:
+      - developers
       - users
 ```
 
@@ -278,6 +280,10 @@ Después de modificar, aplica los cambios:
 kubectl apply -f k8s/authelia/03-secret.yaml
 kubectl rollout restart deployment/authelia -n authelia
 ```
+
+**📖 Guía completa:** Para gestionar usuarios, grupos (roles), configurar políticas de acceso basadas en roles, y cómo leer la información de usuarios desde tus aplicaciones frontend y backend, consulta: [docs/USUARIOS-Y-ROLES.md](docs/USUARIOS-Y-ROLES.md)
+
+Esta guía incluye ejemplos de código en Node.js, Python, Go, PHP y más.
 
 ### Configurar 2FA (TOTP)
 

@@ -184,6 +184,25 @@ authentication_backend:
     password: password  # Mejor usar un secret
 ```
 
+### ¿Cómo creo usuarios con diferentes roles y cómo leo esta información desde mis aplicaciones?
+
+Para crear usuarios, asignar grupos (roles), y leer esta información desde tus aplicaciones frontend y backend, consulta la **guía completa**: [docs/USUARIOS-Y-ROLES.md](USUARIOS-Y-ROLES.md)
+
+Esta guía incluye:
+- Cómo añadir usuarios y asignar grupos
+- Configurar políticas de acceso basadas en grupos
+- Leer headers de usuario desde frontend (React, Vue, JavaScript)
+- Leer headers desde backend (Node.js, Python, Go, PHP, Java)
+- Ejemplos prácticos de autorización basada en roles
+- Mejores prácticas de seguridad
+
+**Resumen rápido:**
+Los usuarios reciben grupos (roles) en `k8s/authelia/03-secret.yaml`, y tus aplicaciones pueden leer esta información desde los headers:
+- `Remote-User`: Nombre de usuario
+- `Remote-Groups`: Grupos separados por comas (ej: `admins,developers`)
+- `Remote-Email`: Email del usuario
+- `Remote-Name`: Nombre completo
+
 ## Uso
 
 ### ¿Cómo configuro 2FA?
