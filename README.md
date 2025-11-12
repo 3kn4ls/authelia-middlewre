@@ -53,12 +53,14 @@ Tu SSH, servidor de Minecraft y otros servicios **seguirán funcionando exactame
 │   ├── deploy.sh             # Desplegar Authelia
 │   └── uninstall.sh          # Desinstalar Authelia
 ├── docs/                      # Documentación adicional
+│   ├── INSTALACION-AUTOMATIZADA.md  # Instalación automatizada (RECOMENDADO)
 │   ├── QUICKSTART.md         # Guía de inicio rápido
 │   ├── COMO-FUNCIONA.md      # Explicación técnica del flujo de autenticación
-│   ├── USUARIOS-Y-ROLES.md   # Gestión de usuarios, grupos y autorización
+│   ├── USUARIOS-Y-ROLES.MD   # Gestión de usuarios, grupos y autorización
 │   ├── FAQ.md                # Preguntas frecuentes
 │   ├── SSL-EXISTENTE.md      # Usar certificados SSL existentes
 │   └── CERT-MANAGER.md       # Configurar cert-manager
+├── config.env.example        # Ejemplo de configuración (copiar a config.env)
 └── README.md                  # Esta guía
 ```
 
@@ -74,9 +76,38 @@ Antes de comenzar, asegúrate de tener:
 6. **Certificados SSL** configurados (Let's Encrypt u otro) - Si ya los tienes, ¡perfecto! Si no, consulta `docs/CERT-MANAGER.md`
 7. **Docker** instalado (solo para generar passwords, opcional)
 
-## Instalación Rápida
+## Instalación
 
-### Paso 1: Personalizar el Dominio
+### Opción A: Instalación Automatizada ⭐ **RECOMENDADA**
+
+La forma más rápida y sencilla de instalar Authelia:
+
+```bash
+# 1. Copiar archivo de configuración
+cp config.env.example config.env
+
+# 2. Editar con tus valores (dominio, usuarios, passwords, etc.)
+nano config.env
+
+# 3. Ejecutar instalación automática
+./scripts/install.sh
+```
+
+¡Eso es todo! El script se encargará de:
+- ✅ Generar secretos seguros
+- ✅ Hashear passwords automáticamente
+- ✅ Personalizar todos los manifiestos
+- ✅ Desplegar en K3s
+
+**📖 Guía completa:** [docs/INSTALACION-AUTOMATIZADA.md](docs/INSTALACION-AUTOMATIZADA.md)
+
+---
+
+### Opción B: Instalación Manual
+
+Si prefieres hacerlo paso a paso:
+
+#### Paso 1: Personalizar el Dominio
 
 Reemplaza `TUDOMINIO.COM` en todos los archivos con tu dominio real:
 
@@ -84,7 +115,7 @@ Reemplaza `TUDOMINIO.COM` en todos los archivos con tu dominio real:
 ./scripts/customize-domain.sh midominio.com
 ```
 
-### Paso 2: Generar Secretos
+#### Paso 2: Generar Secretos
 
 Genera secretos aleatorios seguros:
 
@@ -94,7 +125,7 @@ Genera secretos aleatorios seguros:
 
 Copia los valores generados y pégalos en `k8s/authelia/03-secret.yaml` reemplazando las líneas que empiezan con `CAMBIAR_ESTE_SECRET`.
 
-### Paso 3: Configurar Usuarios
+#### Paso 3: Configurar Usuarios
 
 Por defecto, hay un usuario `admin` con password `password`. **Debes cambiarlo**.
 
@@ -112,7 +143,7 @@ O si prefieres especificar el password directamente:
 
 Copia el hash generado y actualiza el usuario en `k8s/authelia/03-secret.yaml` en la sección `users_database.yml`.
 
-### Paso 4: Desplegar Authelia
+#### Paso 4: Desplegar Authelia
 
 ```bash
 ./scripts/deploy.sh
@@ -120,7 +151,7 @@ Copia el hash generado y actualiza el usuario en `k8s/authelia/03-secret.yaml` e
 
 Este script desplegará todos los recursos en el orden correcto.
 
-### Paso 5: Verificar el Despliegue
+#### Paso 5: Verificar el Despliegue
 
 Verifica que el pod esté corriendo:
 
@@ -134,7 +165,7 @@ Ver los logs:
 kubectl -n authelia logs -f deployment/authelia
 ```
 
-### Paso 6: Acceder al Portal
+#### Paso 6: Acceder al Portal
 
 Una vez que el pod esté en estado `Running`, accede a:
 
